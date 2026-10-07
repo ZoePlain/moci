@@ -38,7 +38,7 @@ import utils
 import timer
 
 # Dictionary of models which Moose is set up to accept
-MODELS = ['atmos', 'jules', 'nemo', 'medusa', 'cice', 'si3',
+MODELS = ['atmos', 'lfric_atm', 'jules', 'nemo', 'medusa', 'cice', 'si3',
           'bisicles', 'unicicles']
 
 
@@ -89,6 +89,9 @@ class _Moose(object):
             # for NEMO raw model outputfiles (<fnprefix>o_[iceberg_]YYYYMMDD_*).
             # Vulnerability is corrected by checking against fnprefix.
             splitname = re.split('_', rqst)
+            # Fixes 'lfric' and 'atm' being split in splitname
+            if "lfric_atm" in rqst:
+                splitname[0:2] = ['_'.join(splitname[0:2])]
             if fnprefix in [m[:-1] for m in MODELS] and \
                     splitname[0] != splitname[1]:
                 # Catch filenames incorrectly evaluated as netCDF convention
@@ -97,10 +100,14 @@ class _Moose(object):
                 id_split = 1
             self._model_id = splitname[id_split][-1]
             self._file_id = '_'.join(splitname[id_split+1:])
+            self._id_split = id_split
+            self._splitname = splitname
         else:
             # Non-netCDF convention files
             self._model_id = rqst[len(fnprefix):len(fnprefix) + 1]
             self._file_id = rqst[len(fnprefix) + 2:]
+        self._rqst = rqst
+        self._fnprefix = fnprefix
 
         if not self.chkset():
             # Create a set
@@ -162,7 +169,7 @@ class _Moose(object):
         msg = ''
         model_id = self._model_id
 
-        if model_id == 'a':  # Atmosphere output
+        if model_id in 'am':  # Atmosphere output
             if self._file_id.endswith('.nc'):
                 fn_facets = self._file_id.split('_')
                 if re.match(r'^[pm][a-z0-9](-.*)?$', fn_facets[-1]):
@@ -234,7 +241,7 @@ class _Moose(object):
                     file_id = 'b' + fn_facets[0][-1]
 
         else:
-            msg = 'moo.py - Model id "{}" in filename  not recognised.'.\
+            msg = 'moo.py - Model id "{}" in filename not recognised.'.\
                 format(model_id)
             msg += '\n -> Please contact crum@metoffice.gov.uk ' \
                 'if your requirements are not being met by this script.'

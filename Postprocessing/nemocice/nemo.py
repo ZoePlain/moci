@@ -177,7 +177,7 @@ class NemoPostProc(mt.ModelTemplate):
 
     def rst_set_stencil(self, rsttype):
         '''
-        Return a regular expression to match means filenames output
+        Return a regular expression to match restart filenames output
         directly by the model.
         '''
         return r'^{P}o_{T1}_?\d{{8}}_restart{T2}(\.nc)?$'.format(P=self.prefix,

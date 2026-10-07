@@ -47,6 +47,7 @@ def run_postproc():
     #    Value = Directory relative to main_pp.py containing the above module
     models = {
         'atmos': 'atmos',
+        'lfric_atm': 'atmos',
         'nemo': 'nemocice',
         'cice': 'nemocice',
         'unicicles': 'unicicles',

@@ -26,6 +26,7 @@ MODEL_COMPONENTS = {
     # Key=model name
     # Value=tuple(realm, dict(fields associated with netCDF model component(s)))
     'atmos': {'atmos': ('a', [FIELD_REGEX], [''])},
+    'lfric_atm': {'lfric_atm': ('a', ['mesh'])},
     'nemo': {'nemo': ('o', ['grid-U', 'grid-V', 'grid-W', 'grid-T',
                             'diaptr', 'trnd3d', 'scalar', 'isf-T',
                             'UK-shelf-T', 'UK-shelf-U', 'UK-shelf-V'],

@@ -48,7 +48,7 @@ SEASONS = tuple(''.join([c[0] for c in [MONTHS[m],
                 for m in range(12))
 
 
-class LfricPostProc(mt.ModelTemplate):
+class Lfric_atmPostProc(mt.ModelTemplate):
     '''
     Methods and properties specific to the LFRic Atmosphere
     post processing application.
@@ -62,7 +62,7 @@ class LfricPostProc(mt.ModelTemplate):
         
         print("In move_to_share (LFRic)")
         print("LFRic Pattern-pre: ",pattern)
-        super(LfricPostProc, self).move_to_share(pattern=pattern)
+        super(Lfric_atmPostProc, self).move_to_share(pattern=pattern)
         print("LFRic Pattern-post: ",pattern)
         utils.log_msg('Congratulations! You have made it into the move_to_share bit of code, part 2.', level='INFO')
         current_date = utils.CylcCycle().startcycle['iso'][0:8]

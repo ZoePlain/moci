@@ -209,7 +209,7 @@ class Lfric_atmPostProc(mt.ModelTemplate):
                                              originpath=self.share)
 
 
-INSTANCE = ('lfricpp.nl', LfricPostProc)
+INSTANCE = ('lfricpp.nl', Lfric_atmPostProc)
 
 
 if __name__ == '__main__':

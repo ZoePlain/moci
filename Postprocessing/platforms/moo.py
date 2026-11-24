@@ -168,8 +168,10 @@ class _Moose(object):
         ext = ''
         msg = ''
         model_id = self._model_id
+        print("model_id:")
+        print(model_id)
 
-        if model_id in 'am':  # Atmosphere output
+        if model_id in 'a':  # Atmosphere output
             if self._file_id.endswith('.nc'):
                 fn_facets = self._file_id.split('_')
                 if re.match(r'^[pm][a-z0-9](-.*)?$', fn_facets[-1]):

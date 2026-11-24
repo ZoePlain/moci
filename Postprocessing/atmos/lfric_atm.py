@@ -58,30 +58,20 @@ class Lfric_atmPostProc(mt.ModelTemplate):
         '''
         Move files to share directory
         '''
-        utils.log_msg('Congratulations! You have made it into the move_to_share bit of code.', level='INFO')
-        
-        print("In move_to_share (LFRic)")
-        print("LFRic Pattern-pre: ",pattern)
         super(Lfric_atmPostProc, self).move_to_share(pattern=pattern)
-        print("LFRic Pattern-post: ",pattern)
-        utils.log_msg('Congratulations! You have made it into the move_to_share bit of code, part 2.', level='INFO')
         current_date = utils.CylcCycle().startcycle['iso'][0:8]
         utils.log_msg('Our current date is '+current_date, level='INFO')
 
     @property
     def _mean_fields(self):
         ''' Return a list of means fields available '''
-        print("In mean_fields (LFRic)")
         fields = []
         for val in self.model_components.values():
             fields += [f for f in val if 'shelf' not in f]
-        print("Fields list: ", fields)
         return sorted(fields)
 
     def rebuild_restarts(self):
         '''Rebuild partial restart files'''
-        print("Inside lfric_atm rebuild_restarts()")
-        print("self.rsttypes: ", self.rsttypes)
         for rst in self.rsttypes:
             pattern = self.rst_set_stencil(rst).rstrip('$').lstrip('^')
             self.rebuild_fileset(self.share, pattern)
@@ -89,15 +79,12 @@ class Lfric_atmPostProc(mt.ModelTemplate):
     @property
     def model_components(self):
         '''Name of model component, to be used as a prefix to archived files '''
-        print("Inside lfric_atm model_components()")
-        print("Will return: 'lfric_atm': ['mesh']")
         return {
             'lfric_atm': ['mesh']
             }
 
     def rsttypes(self):
         ''' Returns a tuple of restart file types available '''
-        print("Inside lfric_atm rsttypes()")
         return (('', 'TESTING_0'), ('', ''), ('', 'TESTING_2'), ('', 'TESTING_3'))
 
     def rst_set_stencil(self, rsttype):
@@ -113,14 +100,12 @@ class Lfric_atmPostProc(mt.ModelTemplate):
         '''
         Return the LFRic monthly mean file
         '''
-        print("Inside general_mean_stencil():")
-        print("self.prefix: ",self.prefix)
-        print("Base: ", base)
         
         return \
          r'^{P}a_{B}(_\d{{8,10}}){{2}}_{F}(_\d{{4}})?(\.nc)?$'.format(P=self.prefix,
                                                     B=base if base else r'\d+[hdmsy]',
                                                     F=field)
+
 
     def model_realm(self, field):
         '''
@@ -131,10 +116,8 @@ class Lfric_atmPostProc(mt.ModelTemplate):
             field <type str> Individual fieldname
                              or  "|" separated list of fieldnames
         '''
-        print("In model_realm():")
 
         realm = 'a'
-        print("realm: ", realm)
         
         return realm
 
@@ -144,9 +127,8 @@ class Lfric_atmPostProc(mt.ModelTemplate):
         Create monthly, seasonal, annual means.
         Delete component files as necessary.
         '''
-        print("In create_means():")
+
         utils.create_dir(self.diagsdir)
-        print("self.mean_fields:")
         print(self.mean_fields)
         for inputs in self.loop_inputs(self.mean_fields):
 
@@ -156,21 +138,15 @@ class Lfric_atmPostProc(mt.ModelTemplate):
                 period = inputs.base
                 inputs.start_date = self.get_date(setend)
                 meanset = self.periodfiles(inputs, 'set')
-                print("meanset:")
-                print(meanset)
                 self.preprocess_meanset(meanset)
 
                 # Reset start date to beginning of the period for mean_stencil
                 inputs.start_date = self.get_date(sorted(meanset)[0])
 
                 pmean = self.requested_means[period]
-                print("pmean:")
-                print(pmean)
                 pmean.component_files = meanset
                 pmean.periodend = self.get_date(setend, enddate=True)
                 pmean.set_filename(self.mean_stencil(inputs), self.share)
-                print("pmean:")
-                print(pmean)
                 if inputs.custom:
                     pmean.set_title(prefix=inputs.custom)
 
@@ -187,14 +163,6 @@ class Lfric_atmPostProc(mt.ModelTemplate):
                                            pmean.fname['full'])
 
                     if period != pmean.component:
-                        print("period:")
-                        print(period)
-                        print("pmean.component:")
-                        print(pmean.component)
-                        print("self.additional_means:")
-                        print(self.additional_means)
-                        print("list(self.requested_means.keys())[0]:")
-                        print(list(self.requested_means.keys())[0])
                         # Either archive or delete base mean components
                         if period == list(self.requested_means.keys())[0] and \
                                 pmean.component not in self.additional_means:
